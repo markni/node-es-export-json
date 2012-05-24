@@ -31,10 +31,10 @@ var db = es.connect("localhost", port),
 var target = config == "-m"? mapping:index;
 
 
-console.log("To back an index, use:");
+console.log("/nTo backup an index, use:");
 console.log("   -i INDEX_NAME PORT_NUMBER FILE_NAME");
 
-console.log("To back a mapping, use:");
+console.log("To backup a mapping, use:");
 console.log("   -m INDEX_NAME MAPPING_NAME PORT_NUMBER FILE_NAME");
 
 backup();
