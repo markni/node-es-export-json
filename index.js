@@ -4,38 +4,20 @@
 var
 //es = require('com.izaakschroeder.elasticsearch'),
     es = require('./elasticsearch'),
-    fs = require('fs');
-
-var
-    config = process.argv[2] || "-m", //default is export mapping
-    default_index = "big-data",
-    default_mapping = "magic-cards",
-    default_port = "9200",
-    default_filename = "backup.json";
-
-var host, index_name, mapping_name, port, file_name;
-
-if (config == "-m") {
-
-    index_name = process.argv[3] || default_index, mapping_name = process.argv[4] || default_mapping, port = process.argv[5] || default_port, file_name = process.argv[6] || default_filename;
-} else if (config == "-i") {
-    console.log("here");
-    index_name = process.argv[3] || default_index, port = process.argv[4] || default_port, file_name = process.argv[5] || default_filename;
-}
+    fs = require('fs'),
+    argv = require('optimist').usage('Usage: $0 -h [host] -p [port] -i [index_name] -m [mapping] -f [file_name]').demand(['i']).default({ h : "localhost", p : 9200, f : "backup.json" }).argv;
 
 
-var db = es.connect("localhost", port),
-    index = db.index(index_name),
-    mapping = index.mapping(mapping_name);
-
-var target = config == "-m"? mapping:index;
 
 
-console.log("/nTo backup an index, use:");
-console.log("   -i INDEX_NAME PORT_NUMBER FILE_NAME");
+var db = es.connect(argv.h, argv.p),
+    index = db.index(argv.i),
+    mapping = index.mapping(argv.m);
 
-console.log("To backup a mapping, use:");
-console.log("   -m INDEX_NAME MAPPING_NAME PORT_NUMBER FILE_NAME");
+//if -m is inputed, we backup the specific mapping
+var target = (argv.m) ? mapping : index;
+
+
 
 backup();
 
@@ -72,7 +54,8 @@ function searchCallback(response, obj) {
     if (obj.hits) {
         //TODO: Remove unused information from the JSON
         var data = JSON.stringify(obj.hits.hits);
-        exportFromEs(data, file_name);
+        //TODO: make default file name a unique name (like generated with current time)
+        exportFromEs(data, argv.f);
     }
 
 }

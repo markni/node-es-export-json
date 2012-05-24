@@ -1,16 +1,21 @@
 This tool requires node.js and ElasticSearch.
 
+Run this first:
 
-To backup an index, use:
+``$ npm install``
 
-``node index.js -i INDEX_NAME PORT_NUMBER FILE_NAME``
+Usage: 
 
-To backup a mapping, use:
-
-``node index.js -m INDEX_NAME MAPPING_NAME PORT_NUMBER FILE_NAME``
+``$ node index.js -h [host] -p [port] -i [index_name] -m [mapping] -f [file_name]``
 
 For exmaple 
 
-``$ node index.js -m big-data magic-cards 9200 test.json``
+``$ node index.js -h localhost -p 9200 -i big-data -m magic-cards -f test.json``
 
 Should backup the magic-cards into a file called "test.json" 
+
+Only -i is required
+
+``$ node index.js -i big-data``
+
+This will backup big-data index to "backup.json" 
