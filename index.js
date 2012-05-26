@@ -1,78 +1,74 @@
-
-var ElasticSearchExport =  function () {
-    /**
-     * Module dependencies.
-     */
-
-    //var es = require('com.izaakschroeder.elasticsearch'),
-    //not using here because I modified the elasticsearch lib, added two new method
-    var es = require('./elasticsearch');
-    var fs = require('fs');
+/**
+ * Module dependencies.
+ */
+var
+//es = require('com.izaakschroeder.elasticsearch'),
+    es = require('./elasticsearch'),
+    fs = require('fs'),
+    argv = require('optimist').usage('Usage: $0 -h [host] -p [port] -i [index_name] -m [mapping] -f [file_name]').demand(['i']).default({ h : "localhost", p : 9200, f : "backup.json" }).argv;
 
 
-    //options phrasing with optimist
-    var argv = require('optimist').usage('Usage: $0 -h [host] -p [port] -i [index_name] -m [mapping] -f [file_name]').demand(['i']).default({ h:"localhost", p:9200, f:"backup.json" }).argv;
 
 
-    var db = es.connect(argv.h, argv.p);
-    var index = db.index(argv.i);
-    var mapping = index.mapping(argv.m);
+var db = es.connect(argv.h, argv.p),
+    index = db.index(argv.i),
+    mapping = index.mapping(argv.m);
 
-    //if -m is inputed, we backup the specific mapping
-    var target = (argv.m) ? mapping : index;
-
-
-    this.main = function () {
-        target.count(countCallback);
-
-    }
-
-    var query_builder = function (size) {
-        var q = {
-            "query":{
-                "match_all":{}
-            }
-        };
-        q.size = size;
-        return q;
-
-    }
-
-    var countCallback = function (response, obj) {
-        //the obj is the data we want!
-        if (obj.count) {
-            var count = JSON.stringify(obj.count);
-
-            var q = query_builder(count);
-
-            target.search(q, searchCallback);
-        }
+//if -m is inputed, we backup the specific mapping
+var target = (argv.m) ? mapping : index;
 
 
-    }
 
-    var searchCallback = function (response, obj) {
-        if (obj.hits) {
-            //TODO: Remove unused information from the JSON
-            var data = JSON.stringify(obj.hits.hits);
-            //TODO: make default file name a unique name (like generated with current time)
-            exportFromEs(data, argv.f);
-        }
+backup();
 
-    }
+function backup() {
+    target.count(countCallback);
 
-
-    var exportFromEs = function (data, f_name) {
-        fs.writeFile(f_name, data, function (err) {
-            if (err) {
-                console.error("Could not open file: %s", err);
-                process.exit(1);
-            } else {
-                console.log("\n The file was saved to " + f_name);
-            }
-        });
-    }
 }
 
-var el = new ElasticSearchExport();
-el.main();
+function query_builder(size) {
+    var q = {
+        "query": {
+            "match_all": {}
+        }
+    };
+    q.size = size;
+    return q;
+
+}
+
+function countCallback(response, obj) {
+    //the obj is the data we want!
+    if (obj.count) {
+        var count = JSON.stringify(obj.count);
+
+        var q = query_builder(count);
+
+        target.search(q, searchCallback);
+    }
+
+
+}
+
+function searchCallback(response, obj) {
+    if (obj.hits) {
+        //TODO: Remove unused information from the JSON
+        var data = JSON.stringify(obj.hits.hits);
+        //TODO: make default file name a unique name (like generated with current time)
+        exportFromEs(data, argv.f);
+    }
+
+}
+
+
+
+function exportFromEs(data, f_name) {
+    fs.writeFile(f_name, data, function (err) {
+        if (err) {
+            console.error("Could not open file: %s", err);
+            process.exit(1);
+        } else {
+            console.log("\n The file was saved to " + f_name);
+        }
+    });
+}
