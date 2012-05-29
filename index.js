@@ -38,6 +38,8 @@ var ElasticSearchExport =  function () {
 
     this.main = function () {
         target.count(countCallback);
+        console.log("Loading data...");
+        console.log("It may takes a minutes or two, it's a good time to take out the garbage.");
 
     }
 
@@ -82,7 +84,7 @@ var ElasticSearchExport =  function () {
                 console.error("Could not open file: %s", err);
                 process.exit(1);
             } else {
-                console.log("\n The file was saved to " + f_name);
+                console.log("\nDone! The file was saved to " + f_name);
             }
         });
     }
