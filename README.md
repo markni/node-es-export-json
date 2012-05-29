@@ -14,8 +14,8 @@ For exmaple
 
 Should backup the magic-cards into a file called "test.json" 
 
-Only -i is required
+when -i is not inputted, it will back up the entire database
 
-``$ node index.js -i big-data``
+``$ node index.js``
 
-This will backup big-data index to "backup.json" 
+This will backup entire database into "backup.json" 

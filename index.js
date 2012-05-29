@@ -11,15 +11,29 @@ var ElasticSearchExport =  function () {
 
 
     //options phrasing with optimist
-    var argv = require('optimist').usage('Usage: $0 -h [host] -p [port] -i [index_name] -m [mapping] -f [file_name]').demand(['i']).default({ h:"localhost", p:9200, f:"backup.json" }).argv;
+    var argv = require('optimist').usage('Usage: $0 -h [host] -p [port] -i [index_name] -m [mapping] -f [file_name]').default({ h:"localhost", p:9200, f:"backup.json" }).argv;
 
 
     var db = es.connect(argv.h, argv.p);
-    var index = db.index(argv.i);
-    var mapping = index.mapping(argv.m);
 
-    //if -m is inputed, we backup the specific mapping
-    var target = (argv.m) ? mapping : index;
+    var index, mapping, target;
+
+    //if no index input, we assume user wants to backup entire database.
+    if (argv.i){
+
+        index = db.index(argv.i);
+        mapping = index.mapping(argv.m);
+        //if -m is inputed, we backup the specific mapping
+        target = (argv.m) ? mapping : index;
+    }
+    else{
+
+        target = db.index("");
+    }
+
+
+
+
 
 
     this.main = function () {
@@ -74,5 +88,5 @@ var ElasticSearchExport =  function () {
     }
 }
 
-var el = new ElasticSearchExport();
-el.main();
+var ese = new ElasticSearchExport();
+ese.main();
