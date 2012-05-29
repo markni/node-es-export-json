@@ -39,7 +39,7 @@ var ElasticSearchExport =  function () {
     this.main = function () {
         target.count(countCallback);
         console.log("Loading data...");
-        console.log("It may takes a minutes or two, it's a good time to take out the garbage.");
+        console.log("It may take a minutes or two, might be a good time to take out the garbage.");
 
     }
 

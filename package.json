@@ -1,6 +1,6 @@
 {
 	"name": "node-es-export-json",
-	"version": "0.0.4",
+	"version": "0.0.4.1",
 	"dependencies": {
 
         "optimist": "*"
