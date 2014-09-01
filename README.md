@@ -1,3 +1,11 @@
+**Elastic search has finally introduced snapshot this year, this tool is no longer supported**
+
+> http://www.elasticsearch.org/guide/en/elasticsearch/reference/current/modules-snapshots.html
+
+
+---------------------
+
+
 This tool requires node.js and ElasticSearch.
 
 Run this first:
